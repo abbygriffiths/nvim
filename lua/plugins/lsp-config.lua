@@ -22,7 +22,6 @@ return {
 				dynamicRegistration = false,
 				lineFoldingOnly = true,
 			}
-			require("ufo").setup()
 
 			-- setup the lsps
 			lspconfig.pyright.setup({
@@ -83,6 +82,8 @@ return {
 					end, opts)
 				end,
 			})
+
+			require("ufo").setup()
 		end,
 	},
 }
