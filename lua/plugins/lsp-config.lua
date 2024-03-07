@@ -1,89 +1,99 @@
 return {
-	{
-		"williamboman/mason.nvim",
-		config = function()
-			require("mason").setup({})
-		end,
-	},
-	{
-		"williamboman/mason-lspconfig.nvim",
-		opts = {
-			ensure_installed = { "lua_ls", "rust_analyzer", "pyright" },
-		},
-	},
-	{
-		"neovim/nvim-lspconfig",
-		config = function()
-			local lspconfig = require("lspconfig")
-			local capabilities = require("cmp_nvim_lsp").default_capabilities()
+    {
+        "neovim/nvim-lspconfig",
+        dependencies = {
+            { "williamboman/mason.nvim", opts = {} },
+            {
+                "williamboman/mason-lspconfig.nvim",
+                opts = {
+                    ensure_installed = { "lua_ls", "rust_analyzer", "pyright", "gopls", "clangd" },
+                },
+            },
+            { "j-hui/fidget.nvim", opts = {} },
+        },
+        config = function()
+            require("mason").setup()
+            require("mason-lspconfig").setup()
+            local lspconfig = require("lspconfig")
 
-			-- Allow folding capability
-			capabilities.textDocument.foldingRange = {
-				dynamicRegistration = false,
-				lineFoldingOnly = true,
-			}
+            local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-			-- setup the lsps
-			lspconfig.pyright.setup({
-				capabilities = capabilities,
-			})
+            -- Allow folding capability
+            capabilities.textDocument.foldingRange = {
+                dynamicRegistration = false,
+                lineFoldingOnly = true,
+            }
 
-			lspconfig.lua_ls.setup({
-				capabilities = capabilities,
-			})
+            local servers = { "pyright", "lua_ls", "ruby_ls", "rust_analyzer", "gopls" }
+            for _, server in ipairs(servers) do
+                lspconfig[server].setup({
+                    capabilities = capabilities,
+                })
+            end
+--[[ 
+            -- setup the lsps
+            lspconfig.pyright.setup({
+                capabilities = capabilities,
+            })
+            lspconfig.lua_ls.setup({
+                capabilities = capabilities,
+            })
+            lspconfig.gopls.setup({
+                capabilities = capabilities,
+            })
+            lspconfig.ruby_ls.setup({
+                capabilities = capabilities,
+            })
+            lspconfig.rust_analyzer.setup({
+                capabilities = capabilities,
+            })
+ ]]
+            vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, {})
+            vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, {})
+            vim.keymap.set("n", "<leader>mca", vim.lsp.buf.code_action, {})
 
-			lspconfig.ruby_ls.setup({
-				capabilities = capabilities,
-			})
+            -- Use LspAttach autocommand to only map the following keys
+            -- after the language server attaches to the current buffer
+            vim.api.nvim_create_autocmd("LspAttach", {
+                group = vim.api.nvim_create_augroup("UserLspConfig", {}),
+                callback = function(event)
+                    local map = function(keys, cmd, desc)
+                        vim.keymap.set("n", keys, cmd, { desc = desc, buffer = event.buf })
+                    end
 
-			lspconfig.rust_analyzer.setup({
-				capabilities = capabilities,
-			})
+                    local builtin = require("telescope.builtin")
 
-			vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, {})
-			vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, {})
-			vim.keymap.set("n", "<leader>mca", vim.lsp.buf.code_action, {})
+                    map("<leader>gd", builtin.lsp_definitions, "[g]oto [d]efinition")
+                    map("<leader>gr", builtin.lsp_references, "[g]oto [r]eferences")
+                    map("<leader>gd", vim.lsp.buf.declaration, "[g]oto [D]eclaration")
+                    map("<leader>gi", builtin.lsp_implementations, "[g]oto [i]mplementation")
 
-			-- Use LspAttach autocommand to only map the following keys
-			-- after the language server attaches to the current buffer
-			vim.api.nvim_create_autocmd("LspAttach", {
-				group = vim.api.nvim_create_augroup("UserLspConfig", {}),
-				callback = function(event)
-					-- Enable completion triggered by <c-x><c-o>
-					vim.bo[event.buf].omnifunc = "v:lua.vim.lsp.omnifunc"
+                    local client = vim.lsp.get_client_by_id(event.data.client_id)
+                    if client and client.server_capabilities.documentHighlightProvider then
+                        vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+                            buffer = event.buf,
+                            callback = vim.lsp.buf.document_highlight,
+                        })
 
-					-- Buffer local mappings.
-					-- See `:help vim.lsp.*` for documentation on any of the below functions
-					local opts = { buffer = event.buf }
-					-- goto
-					vim.keymap.set("n", "<leader>gD", vim.lsp.buf.declaration, opts)
-					vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, opts)
-					vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, opts)
-					vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
+                        vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+                            buffer = event.buf,
+                            callback = vim.lsp.buf.clear_references,
+                        })
+                    end
 
-					-- help
-					vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-					vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts)
+                    map("K", vim.lsp.buf.hover, "Show info about thing below cursor")
+                    map("<C-k>", vim.lsp.buf.signature_help, { buffer = event.buf })
+                    map("<leader>D", vim.lsp.buf.type_definition, { buffer = event.buf })
+                    map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
+                    map("<leader>,ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
 
-					-- workspace
-					vim.keymap.set("n", "<space>wa", vim.lsp.buf.add_workspace_folder, opts)
-					vim.keymap.set("n", "<space>wr", vim.lsp.buf.remove_workspace_folder, opts)
-					vim.keymap.set("n", "<leader>D", vim.lsp.buf.type_definition, opts)
+                    map(",==", function()
+                        vim.lsp.buf.format({ async = true })
+                    end, "Format Buffer")
+                end,
+            })
 
-					-- rename
-					vim.keymap.set("n", "<leader>rr", vim.lsp.buf.rename, opts)
-
-					-- code action
-					vim.keymap.set({ "n", "v" }, ",ca", vim.lsp.buf.code_action, opts)
-
-					-- formatting
-					vim.keymap.set("n", ",==", function()
-						vim.lsp.buf.format({ async = true })
-					end, opts)
-				end,
-			})
-
-			require("ufo").setup()
-		end,
-	},
+            require("ufo").setup()
+        end,
+    },
 }
