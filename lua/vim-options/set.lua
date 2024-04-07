@@ -1,8 +1,5 @@
 local opt = vim.opt
 
--- font
-opt.guifont = "Iosevka:h17"
-
 opt.foldmethod = "expr"
 opt.foldexpr = "lua vim.treesitter.foldexpr()"
 opt.foldtext = "lua vim.treesitter.foldtext()"
@@ -18,9 +15,6 @@ opt.breakindent = true
 -- line numbers
 opt.number = true
 opt.relativenumber = true
-
--- colors and colorscheme
-opt.termguicolors = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 opt.mouse = "a"
