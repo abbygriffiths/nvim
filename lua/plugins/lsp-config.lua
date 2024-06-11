@@ -9,7 +9,7 @@ return {
                     ensure_installed = { "lua_ls", "rust_analyzer", "pyright", "gopls", "clangd" },
                 },
             },
-            { "j-hui/fidget.nvim", opts = {} },
+            { "j-hui/fidget.nvim",       opts = {} },
         },
         config = function()
             require("mason").setup()
@@ -24,30 +24,13 @@ return {
                 lineFoldingOnly = true,
             }
 
-            local servers = { "pyright", "lua_ls", "ruby_ls", "rust_analyzer", "gopls" }
+            local servers = { "pyright", "lua_ls", "rust_analyzer", "gopls", "jsonls", "tsserver" }
             for _, server in ipairs(servers) do
                 lspconfig[server].setup({
                     capabilities = capabilities,
                 })
             end
---[[ 
-            -- setup the lsps
-            lspconfig.pyright.setup({
-                capabilities = capabilities,
-            })
-            lspconfig.lua_ls.setup({
-                capabilities = capabilities,
-            })
-            lspconfig.gopls.setup({
-                capabilities = capabilities,
-            })
-            lspconfig.ruby_ls.setup({
-                capabilities = capabilities,
-            })
-            lspconfig.rust_analyzer.setup({
-                capabilities = capabilities,
-            })
- ]]
+
             vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, {})
             vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, {})
             vim.keymap.set("n", "<leader>mca", vim.lsp.buf.code_action, {})
@@ -63,10 +46,10 @@ return {
 
                     local builtin = require("telescope.builtin")
 
-                    map("<leader>gd", builtin.lsp_definitions, "[g]oto [d]efinition")
-                    map("<leader>gr", builtin.lsp_references, "[g]oto [r]eferences")
-                    map("<leader>gd", vim.lsp.buf.declaration, "[g]oto [D]eclaration")
-                    map("<leader>gi", builtin.lsp_implementations, "[g]oto [i]mplementation")
+                    vim.keymap.set("n", "<leader>gd", builtin.lsp_definitions, { desc = "[g]oto [d]efinition" })
+                    vim.keymap.set("n", "<leader>gr", builtin.lsp_references, { desc = "[g]oto [r]eferences" })
+                    vim.keymap.set("n", "<leader>gd", vim.lsp.buf.declaration, { desc = "[g]oto [D]eclaration" })
+                    vim.keymap.set("n", "<leader>gi", builtin.lsp_implementations, { desc = "[g]oto [i]mplementation" })
 
                     local client = vim.lsp.get_client_by_id(event.data.client_id)
                     if client and client.server_capabilities.documentHighlightProvider then
@@ -81,15 +64,15 @@ return {
                         })
                     end
 
-                    map("K", vim.lsp.buf.hover, "Show info about thing below cursor")
-                    map("<C-k>", vim.lsp.buf.signature_help, { buffer = event.buf })
-                    map("<leader>D", vim.lsp.buf.type_definition, { buffer = event.buf })
-                    map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
-                    map("<leader>,ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
+                    vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Show info about thing below cursor" })
+                    vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, { buffer = event.buf })
+                    vim.keymap.set("n", "<leader>D", vim.lsp.buf.type_definition, { buffer = event.buf })
+                    vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { desc = "[R]e[n]ame" })
+                    vim.keymap.set("n", "<leader>,ca", vim.lsp.buf.code_action, { desc = "[C]ode [A]ction" })
 
-                    map(",==", function()
+                    vim.keymap.set("n", ",==", function()
                         vim.lsp.buf.format({ async = true })
-                    end, "Format Buffer")
+                    end, { desc = "Format Buffer" })
                 end,
             })
 
