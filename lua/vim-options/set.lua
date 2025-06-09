@@ -14,7 +14,6 @@ opt.breakindent = true
 
 -- line numbers
 opt.number = true
-opt.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 opt.mouse = "a"

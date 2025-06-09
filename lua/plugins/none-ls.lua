@@ -12,7 +12,5 @@ return {
                 null_ls.builtins.formatting.prettier,
             },
         })
-
-        vim.keymap.set("n", ",==", vim.lsp.buf.format)
     end,
 }
