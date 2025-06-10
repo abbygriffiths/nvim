@@ -8,6 +8,10 @@ return {
             auto_install = true,
             highlight = { enable = true },
             indent = { enable = true },
+            sync_install = true,
+            ensure_installed = {},
+            ignore_install = {},
+            modules = {}
         })
     end,
 }
