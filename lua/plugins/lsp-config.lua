@@ -67,6 +67,10 @@ return {
                     vim.lsp.buf.format({ async = true })
                 end, { desc = "Format Buffer" })
             end,
+
+            vim.keymap.set("n", ",==", function()
+                vim.lsp.buf.format({ async = true })
+            end, { desc = "Format Buffer" })
         })
 
         require("ufo").setup()

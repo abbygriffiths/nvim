@@ -1,5 +1,5 @@
 if vim.g.neovide then
-    vim.opt.guifont = "Iosevka Nerd Font:h14"
+    vim.opt.guifont = "Iosevka:h14"
     vim.g.termguicolors = true
 
     vim.g.neovide_transparency = 0.95
