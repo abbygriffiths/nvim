@@ -23,7 +23,7 @@ return {
 
         local servers = require("mason-lspconfig").get_installed_servers()
         for _, server in ipairs(servers) do
-            require("lspconfig")[server].setup({
+            vim.lsp.config(server, {
                 capabilities = capabilities,
             })
         end
