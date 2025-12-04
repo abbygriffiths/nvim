@@ -4,7 +4,7 @@ return {
     dependencies = {
         { "williamboman/mason.nvim", opts = {} },
         { "neovim/nvim-lspconfig" },
-        { "j-hui/fidget.nvim",       opts = {} },
+        { "j-hui/fidget.nvim", opts = {} },
     },
     opts = {
         ensure_installed = { "pyright", "lua_ls" },
@@ -26,6 +26,7 @@ return {
             vim.lsp.config(server, {
                 capabilities = capabilities,
             })
+            vim.lsp.enable({ server })
         end
 
         vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, {})
@@ -67,12 +68,8 @@ return {
                     vim.lsp.buf.format({ async = true })
                 end, { desc = "Format Buffer" })
             end,
-
-            vim.keymap.set("n", ",==", function()
-                vim.lsp.buf.format({ async = true })
-            end, { desc = "Format Buffer" })
         })
 
         require("ufo").setup()
-    end
+    end,
 }

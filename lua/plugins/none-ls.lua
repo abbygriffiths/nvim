@@ -22,7 +22,8 @@ return {
         end,
         opts = {
             automatic_installation = true,
-            automatic_setup = false,
+            automatic_setup = true,
+            automatic_startup = true,
             ensure_installed = { "black", "isort" },
         },
     },
