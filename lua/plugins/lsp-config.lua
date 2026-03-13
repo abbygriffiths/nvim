@@ -29,6 +29,74 @@ return {
             vim.lsp.enable({ server })
         end
 
+        vim.lsp.config("ruff", {
+            init_options = {
+                settings = {
+                    line_length = 100,
+                    target_version = "py312",
+                    extend_include = {
+                        "docs",
+                        "db",
+                        "legacy_bridge.py",
+                        "tests",
+                        "utilities",
+                    },
+                    lint = {
+                        select = {
+                            "E",
+                            "W",
+                            "F",
+                            "I",
+                            "B",
+                            "C4",
+                            "UP",
+                        },
+                        ignore = {
+                            "C901",
+                            "B008",
+                            "UP042",
+                            "E501",
+                        },
+                    },
+                    format = {
+                        quote_style = "double",
+                        indent_style = "space",
+                        skip_magic_trailing_comma = false,
+                        line_ending = "auto",
+                    },
+                },
+            },
+        })
+        vim.lsp.enable("ruff")
+
+        vim.lsp.config("pyright", {
+            settings = {
+                pyright = {
+                    disableOrganizeImports = true,
+                },
+                python = {
+                    analysis = {
+                        ignore = { "*" },
+                    },
+                },
+            },
+        })
+
+        -- vim.api.nvim_create_autocmd("LspAttach", {
+        --   group = vim.api.nvim_create_augroup('lsp_attach_disable_ruff_hover', { clear = true }),
+        --   callback = function(args)
+        --     local client = vim.lsp.get_client_by_id(args.data.client_id)
+        --     if client == nil then
+        --       return
+        --     end
+        --     if client.name == 'ruff' then
+        --       -- Disable hover in favor of Pyright
+        --       client.server_capabilities.hoverProvider = false
+        --     end
+        --   end,
+        --   desc = 'LSP: Disable hover capability from Ruff',
+        -- })
+
         vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, {})
         vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, {})
         vim.keymap.set("n", "<leader>mca", vim.lsp.buf.code_action, {})

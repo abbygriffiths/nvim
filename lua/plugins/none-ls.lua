@@ -6,8 +6,7 @@ return {
         null_ls.setup({
             sources = vim.list_extend(opts.sources or {}, {
                 null_ls.builtins.formatting.stylua,
-                null_ls.builtins.formatting.black,
-                null_ls.builtins.formatting.isort.with({ extra_args = { "--profile", "black" } }),
+                null_ls.builtins.formatting.isort,
                 null_ls.builtins.formatting.rubocop,
                 null_ls.builtins.diagnostics.rubocop,
                 null_ls.builtins.formatting.prettier,
@@ -24,7 +23,7 @@ return {
             automatic_installation = true,
             automatic_setup = true,
             automatic_startup = true,
-            ensure_installed = { "black", "isort" },
+            ensure_installed = { "stylua", "prettier" },
         },
     },
 }
