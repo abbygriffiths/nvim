@@ -6,7 +6,6 @@ return {
         null_ls.setup({
             sources = vim.list_extend(opts.sources or {}, {
                 null_ls.builtins.formatting.stylua,
-                null_ls.builtins.formatting.isort,
                 null_ls.builtins.formatting.rubocop,
                 null_ls.builtins.diagnostics.rubocop,
                 null_ls.builtins.formatting.prettier,

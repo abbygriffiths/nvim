@@ -7,7 +7,7 @@ return {
         { "j-hui/fidget.nvim", opts = {} },
     },
     opts = {
-        ensure_installed = { "pyright", "lua_ls" },
+        ensure_installed = { "basedpyright", "lua_ls", "ruff" },
         automatic_installation = true,
         automatic_enable = true,
     },
@@ -33,7 +33,7 @@ return {
             init_options = {
                 settings = {
                     line_length = 100,
-                    target_version = "py312",
+                    target_version = "py314",
                     extend_include = {
                         "docs",
                         "db",
@@ -68,34 +68,6 @@ return {
             },
         })
         vim.lsp.enable("ruff")
-
-        vim.lsp.config("pyright", {
-            settings = {
-                pyright = {
-                    disableOrganizeImports = true,
-                },
-                python = {
-                    analysis = {
-                        ignore = { "*" },
-                    },
-                },
-            },
-        })
-
-        -- vim.api.nvim_create_autocmd("LspAttach", {
-        --   group = vim.api.nvim_create_augroup('lsp_attach_disable_ruff_hover', { clear = true }),
-        --   callback = function(args)
-        --     local client = vim.lsp.get_client_by_id(args.data.client_id)
-        --     if client == nil then
-        --       return
-        --     end
-        --     if client.name == 'ruff' then
-        --       -- Disable hover in favor of Pyright
-        --       client.server_capabilities.hoverProvider = false
-        --     end
-        --   end,
-        --   desc = 'LSP: Disable hover capability from Ruff',
-        -- })
 
         vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, {})
         vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, {})
