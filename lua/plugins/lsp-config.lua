@@ -1,17 +1,15 @@
 return {
     "williamboman/mason-lspconfig.nvim",
-    version = "^2.3.0",
     dependencies = {
         { "williamboman/mason.nvim", opts = {} },
-        { "neovim/nvim-lspconfig" },
+        "neovim/nvim-lspconfig",
         { "j-hui/fidget.nvim", opts = {} },
     },
     opts = {
-        ensure_installed = { "basedpyright", "lua_ls", "ruff" },
+        ensure_installed = { "pyright", "lua_ls", "ruff" },
         automatic_installation = true,
         automatic_enable = true,
     },
-
     config = function()
         local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
@@ -34,13 +32,7 @@ return {
                 settings = {
                     line_length = 100,
                     target_version = "py314",
-                    extend_include = {
-                        "docs",
-                        "db",
-                        "legacy_bridge.py",
-                        "tests",
-                        "utilities",
-                    },
+                    extend_include = {},
                     lint = {
                         select = {
                             "E",

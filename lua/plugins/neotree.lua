@@ -1,22 +1,49 @@
 return {
-    "nvim-neo-tree/neo-tree.nvim",
-    branch = "v3.x",
-    dependencies = {
-        "nvim-lua/plenary.nvim",
-        "nvim-tree/nvim-web-devicons",
-        "MunifTanjim/nui.nvim",
-        {
-            "s1n7ax/nvim-window-picker",
-            name = "window-picker",
-            event = "VeryLazy",
-            version = "2.*",
-            opts = {
-                hint = "floating-big-letter",
-            },
+    {
+        "nvim-neo-tree/neo-tree.nvim",
+        branch = "v3.x",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            "MunifTanjim/nui.nvim",
+            "nvim-tree/nvim-web-devicons",
         },
+        config = function()
+            local utils = require("utils")
+
+            local neotree = function()
+                vim.cmd("Neotree toggle")
+            end
+
+            utils.remap("<leader>ft", neotree, "Show [f]ile [t]ree")
+        end,
     },
-    config = function()
-        local utils = require("utils")
-        utils.remap("<leader>ft", vim.cmd.Neotree, "Show [f]ile [t]ree")
-    end,
+    {
+        "antosha417/nvim-lsp-file-operations",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            "nvim-neo-tree/neo-tree.nvim",
+        },
+        config = function()
+            require("lsp-file-operations").setup()
+        end,
+    },
+    {
+        "s1n7ax/nvim-window-picker",
+        version = "2.*",
+        config = function()
+            require("window-picker").setup({
+                filter_rules = {
+                    include_current_win = false,
+                    autoselect_one = true,
+                    -- filter using buffer options
+                    bo = {
+                        -- if the file type is one of following, the window will be ignored
+                        filetype = { "neo-tree", "neo-tree-popup", "notify" },
+                        -- if the buffer type is one of following, the window will be ignored
+                        buftype = { "terminal", "quickfix" },
+                    },
+                },
+            })
+        end,
+    },
 }
