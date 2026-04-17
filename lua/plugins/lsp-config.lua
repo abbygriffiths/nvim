@@ -31,7 +31,7 @@ return {
             init_options = {
                 settings = {
                     line_length = 100,
-                    target_version = "py314",
+                    target_version = "py312",
                     extend_include = {},
                     lint = {
                         select = {
